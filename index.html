@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nature Explorer | Журнал о природе</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Основные стили и переменные */
+        :root {
+            --primary: #000;
+            --secondary: #ffcc00;
+            --text: #333;
+            --text-light: #666;
+            --text-white: #fff;
+            --bg-light: #f9f9f9;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            background-color: var(--bg-light);
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* Кнопки */
+        .btn {
+            display: inline-block;
+            background: var(--secondary);
+            color: var(--primary);
+            padding: 12px 25px;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            background: #e6b800;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--secondary);
+            color: var(--secondary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+        
+        /* Шапка сайта */
+        header {
+            background-color: var(--primary);
+            color: var(--text-white);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+            position: relative;
+        }
+        
+        nav ul li a {
+            color: var(--text-white);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            padding: 5px 0;
+        }
+        
+        nav ul li a:hover {
+            color: var(--secondary);
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: var(--transition);
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-white);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Герой-секция */
+        .hero {
+            height: 90vh;
+            min-height: 600px;
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                        url('https://images.unsplash.com/photo-1469474968028-56623f02e42e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            position: relative;
+            animation: fadeIn 1.5s ease;
+        }
+        
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+            color: var(--text-white);
+            animation: slideUp 1s ease;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 20px;
+            max-width: 800px;
+            line-height: 1.2;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 30px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Основной контент */
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 2.2rem;
+            color: var(--text);
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--secondary);
+        }
+        
+        /* Карточки статей */
+        .articles {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .article-card {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            background: var(--text-white);
+        }
+        
+        .article-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .article-img-container {
+            height: 250px;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .article-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        
+        .article-card:hover .article-img {
+            transform: scale(1.05);
+        }
+        
+        .article-content {
+            padding: 25px;
+        }
+        
+        .article-category {
+            display: inline-block;
+            color: var(--secondary);
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .article-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+        
+        .article-card:hover .article-title {
+            color: var(--secondary);
+        }
+        
+        .article-meta {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        
+        .article-meta span {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .article-meta i {
+            margin-right: 5px;
+            font-size: 12px;
+        }
+        
+        .article-excerpt {
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+        
+        .read-more {
+            color: var(--secondary);
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+        
+        .read-more i {
+            margin-left: 5px;
+            font-size: 12px;
+            transition: var(--transition);
+        }
+        
+        .read-more:hover {
+            color: #e6b800;
+        }
+        
+        .read-more:hover i {
+            transform: translateX(3px);
+        }
+        
+        /* Подписка */
+        .newsletter {
+            background: var(--primary);
+            color: var(--text-white);
+            padding: 60px 0;
+            margin: 80px 0;
+            text-align: center;
+        }
+        
+        .newsletter h2 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        
+        .newsletter p {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            color: #ccc;
+        }
+        
+        .newsletter-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .newsletter-form input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+        }
+        
+        .newsletter-form button {
+            border-radius: 0 4px 4px 0;
+        }
+        
+        /* Подвал */
+        footer {
+            background: var(--primary);
+            color: var(--text-white);
+            padding: 70px 0 20px;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+        }
+        
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--secondary);
+        }
+        
+        .footer-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .footer-about p {
+            color: #ccc;
+            margin-bottom: 20px;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: #ccc;
+            transition: var(--transition);
+            font-size: 14px;
+            display: inline-block;
+        }
+        
+        .footer-links a:hover {
+            color: var(--secondary);
+            transform: translateX(5px);
+        }
+        
+        .footer-links a i {
+            margin-right: 8px;
+            font-size: 12px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--text-white);
+            transition: var(--transition);
+        }
+        
+        .social-links a:hover {
+            background: var(--secondary);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 992px) {
+            .header-container {
+                flex-wrap: wrap;
+            }
+            
+            .articles {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+        
+        @media (max-width: 768px) {
+            nav {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 80%;
+                height: calc(100vh - 70px);
+                background: var(--primary);
+                transition: var(--transition);
+                z-index: 999;
+            }
+            
+            nav.active {
+                left: 0;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                padding: 20px;
+            }
+            
+            nav ul li {
+                margin: 15px 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero {
+                height: 80vh;
+                min-height: 500px;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .newsletter-form input {
+                border-radius: 4px;
+                margin-bottom: 10px;
+            }
+            
+            .newsletter-form button {
+                border-radius: 4px;
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero {
+                height: 70vh;
+                min-height: 400px;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .articles {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка сайта -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo"><i class="fas fa-globe"></i>NATURE EXPLORER</a>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#"><i class="fas fa-flask"></i> Наука</a></li>
+                    <li><a href="#"><i class="fas fa-mountain"></i> Природа</a></li>
+                    <li><a href="#"><i class="fas fa-landmark"></i> История</a></li>
+                    <li><a href="#"><i class="fas fa-plane"></i> Путешествия</a></li>
+                    <li><a href="#"><i class="fas fa-camera"></i> Фото</a></li>
+                    <li><a href="#"><i class="fas fa-search"></i></a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Герой-секция -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Откройте удивительный мир нашей планеты</h1>
+            <p>Исследуйте самые захватывающие уголки Земли и узнавайте о невероятных природных явлениях вместе с нами.</p>
+            <div class="hero-buttons">
+                <a href="#" class="btn">Читать журнал</a>
+                <a href="#" class="btn btn-outline">Подписаться</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Основной контент -->
+    <main class="container">
+        <h2 class="section-title">Последние статьи</h2>
+        
+        <div class="articles">
+            <!-- Статья 1 -->
+            <article class="article-card">
+                <div class="article-img-container">
+                    <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Горы" class="article-img">
+                </div>
+                <div class="article-content">
+                    <span class="article-category">Природа</span>
+                    <h3 class="article-title">Тайны горных вершин: как формируются гиганты</h3>
+                    <div class="article-meta">
+                        <span><i class="far fa-calendar-alt"></i> 15 июня 2023</span>
+                        <span><i class="far fa-eye"></i> 2.4K</span>
+                    </div>
+                    <p class="article-excerpt">Исследуем геологические процессы, которые создают самые высокие горные системы на нашей планете.</p>
+                    <a href="#" class="read-more">Читать далее <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+            
+            <!-- Статья 2 -->
+            <article class="article-card">
+                <div class="article-img-container">
+                    <img src="https://images.unsplash.com/photo-1470114716159-e389f8712fda?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Океан" class="article-img">
+                </div>
+                <div class="article-content">
+                    <span class="article-category">Океаны</span>
+                    <h3 class="article-title">Глубинные тайны: что скрывает Марианская впадина</h3>
+                    <div class="article-meta">
+                        <span><i class="far fa-calendar-alt"></i> 8 июня 2023</span>
+                        <span><i class="far fa-eye"></i> 3.1K</span>
+                    </div>
+                    <p class="article-excerpt">Уникальные кадры и открытия из самой глубокой точки мирового океана.</p>
+                    <a href="#" class="read-more">Читать далее <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+            
+            <!-- Статья 3 -->
+            <article class="article-card">
+                <div class="article-img-container">
+                    <img src="https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Животные" class="article-img">
+                </div>
+                <div class="article-content">
+                    <span class="article-category">Дикая природа</span>
+                    <h3 class="article-title">Исчезающие виды: как спасти биоразнообразие</h3>
+                    <div class="article-meta">
+                        <span><i class="far fa-calendar-alt"></i> 1 июня 2023</span>
+                        <span><i class="far fa-eye"></i> 1.8K</span>
+                    </div>
+                    <p class="article-excerpt">Проекты по сохранению редких животных, которые дают надежду на будущее.</p>
+                    <a href="#" class="read-more">Читать далее <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+        </div>
+        
+        <div class="text-center">
+            <a href="#" class="btn">Все статьи</a>
+        </div>
+    </main>
+    
+    <!-- Подписка -->
+    <section class="newsletter">
+        <div class="container">
+            <h2>Подпишитесь на нашу рассылку</h2>
+            <p>Получайте самые интересные статьи и эксклюзивные материалы прямо на вашу почту</p>
+            <form class="newsletter-form" id="subscribeForm">
+                <input type="email" placeholder="Ваш email" required>
+                <button type="submit" class="btn">Подписаться</button>
+            </form>
+        </div>
+    </section>
+    
+    <!-- Подвал -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col footer-about">
+                <a href="#" class="footer-logo"><i class="fas fa-globe"></i> NATURE EXPLORER</a>
+                <p>Журнал о природе, науке и исследованиях нашей планеты с 2023 года. Наша миссия - вдохновлять людей заботиться о планете.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Разделы</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Наука</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Природа</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> История</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Путешествия</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Фотография</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Компания</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> О нас</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Команда</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Вакансии</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Контакты</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Реклама</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Контакты</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-map-marker-alt"></i> Москва, ул. Природная, 15</a></li>
+                    <li><a href="#"><i class="fas fa-phone"></i> +7 (495) 123-45-67</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> info@nature-explorer.ru</a></li>
+                    <li><a href="#"><i class="fas fa-clock"></i> Пн-Пт: 9:00 - 18:00</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2023 Nature Explorer. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Мобильное меню
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mainNav = document.getElementById('mainNav');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mainNav.classList.toggle('active');
+            mobileMenuBtn.innerHTML = mainNav.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+        
+        // Плавная прокрутка для всех ссылок
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Закрываем мобильное меню, если оно открыто
+                    if (mainNav.classList.contains('active')) {
+                        mainNav.classList.remove('active');
+                        mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                    }
+                }
+            });
+        });
+        
+        // Форма подписки
+        const subscribeForm = document.getElementById('subscribeForm');
+        if (subscribeForm) {
+            subscribeForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const emailInput = this.querySelector('input[type="email"]');
+                
+                // Здесь можно добавить AJAX-запрос для отправки данных
+                alert(`Спасибо за подписку! На адрес ${emailInput.value} будет отправлено письмо с подтверждением.`);
+                emailInput.value = '';
+            });
+        }
+        
+        // Анимация при прокрутке
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.article-card, .section-title');
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if (elementPosition < screenPosition) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        };
+        
+        // Устанавливаем начальные стили для анимации
+        document.querySelectorAll('.article-card, .section-title').forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(30px)';
+            element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        });
+        
+        // Запускаем анимацию при загрузке и прокрутке
+        window.addEventListener('load', animateOnScroll);
+        window.addEventListener('scroll', animateOnScroll);
+        
+        // Изменение шапки при прокрутке
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+                header.style.padding = '10px 0';
+            } else {
+                header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
+                header.style.padding = '15px 0';
+            }
+        });
+    </script>
+</body>
+</html>
